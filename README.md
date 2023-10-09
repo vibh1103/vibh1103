@@ -2,6 +2,10 @@
 - 👀 I’m interested in coding developing new projects with exciting ideas...
 - 🌱 I’m currently learning NodeJs, JavaScript and TypeScript
 
+## Hoplin
+[![An image of @vibh1103's Holopin badges, which is a link to view their full Holopin profile](https://holopin.me/vibh1103)](https://holopin.io/@vibh1103)
+
+
 ## 🌐 Socials:
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-%230077B5.svg?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/vibhormalik/) 
 
