@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibhor Malik - Architect of Digital Arcana</title>
+    <!-- Chosen Palette: The Alchemist's Color Table -->
+    <!-- Application Structure Plan: A single-page application structured as a narrative journey through the "Department of Mysteries." The user is guided through thematic sections: Atrium (Landing), Hall of Prophecy (Experience), Chamber of Spells (Skills), Thought Chamber (Projects), and Owl Post (Contact). This non-linear, story-driven approach was chosen to make complex backend concepts tangible and memorable, transforming a standard resume into an engaging exploration of technical mastery and creative problem-solving. Key interactions include modal windows for experience details and smooth scrolling, enhancing usability and narrative flow. -->
+    <!-- Visualization & Content Choices: Resume data is presented thematically. Work Experience -> Goal: Compare & Inform -> Viz: Interactive "Prophecy Orbs" (HTML/CSS/JS) -> Interaction: On-click modals display detailed achievements translated into thematic language. Justification: This transforms a list into an interactive discovery process. Skills -> Goal: Organize & Inform -> Viz: Categorized, icon-driven lists (HTML/Tailwind) -> Interaction: Hover effects reveal skill names. Justification: Grouping skills into "Core Magics" or "Potent Platforms" adds narrative depth and improves scannability. No charts are needed as the data is qualitative. Library/Method: Vanilla JS for all interactions. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;500;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #1a1e23;
+            color: #e0e0e0;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            /* The hotspot of the cursor is moved to the tip of the wand */
+            cursor: url('https://toppng.com/uploads/preview/harry-potter-wand-11563065605q5c5idhqi3.png') 0 20, auto;
+        }
+        a, button, .prophecy-orb, .skill-item {
+            /* The hotspot of the cursor is moved to the tip of the wand */
+            cursor: url('https://toppng.com/uploads/preview/harry-potter-wand-11563065605q5c5idhqi3.png') 0 20, pointer;
+        }
+        .font-magic { font-family: 'Cinzel', serif; }
+        .font-quill { font-family: 'Dancing Script', cursive; }
+        .bg-parchment { background-color: #efeee9; }
+        .text-gold { color: #c39a1c; }
+        .text-prophecy-blue { color: #00a8b5; }
+        .border-prophecy-blue { border-color: #00a8b5; }
+        .bg-prophecy-blue { background-color: #00a8b5; }
+        .text-muted-silver { color: #717679; }
+        .border-muted-silver { border-color: #717679; }
+        .prophecy-orb {
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(0,168,181,0.2) 0%, rgba(42,47,54,0.1) 70%);
+            border: 2px solid #717679;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .prophecy-orb:before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(transparent, rgba(0,168,181,0.5), transparent 30%);
+            animation: rotate 4s linear infinite;
+        }
+        .prophecy-orb:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(0, 168, 181, 0.7);
+            border-color: #00a8b5;
+        }
+        .prophecy-orb .orb-text {
+            position: relative;
+            z-index: 1;
+            background-color: #2a2f36;
+            width: 90%;
+            height: 90%;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+        .modal {
+            transition: opacity 0.25s ease;
+        }
+        .modal-content {
+            transition: transform 0.25s ease;
+        }
+        .particle {
+            position: absolute;
+            background-color: #c39a1c;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            animation: sparkle 1s forwards;
+        }
+        @keyframes sparkle {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(0) translate(20px, -20px); opacity: 0; }
+        }
+        .deathly-hallows {
+            position: relative;
+            width: 20px;
+            height: 20px;
+        }
+        .deathly-hallows .triangle {
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 17.32px solid #c39a1c;
+        }
+        .deathly-hallows .circle {
+            position: absolute;
+            top: 4.5px;
+            left: 4.5px;
+            width: 11px;
+            height: 11px;
+            border: 1.5px solid #c39a1c;
+            border-radius: 50%;
+        }
+        .deathly-hallows .line {
+            position: absolute;
+            top: 0;
+            left: 9.25px;
+            width: 1.5px;
+            height: 17.32px;
+            background-color: #c39a1c;
+        }
+        .section-bg {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            z-index: -1;
+            animation: kenburns 50s ease-in-out infinite;
+        }
+        .video-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -1;
+        }
+        .section-overlay {
+            position: absolute;
+            inset: 0;
+            background-color: rgba(26, 30, 35, 0.85);
+            z-index: -1;
+        }
+        @keyframes kenburns {
+            0%, 100% { transform: scale(1) translate(0, 0); }
+            25% { transform: scale(1.05) translate(1%, -1%); }
+            50% { transform: scale(1.1) translate(-1%, 1%); }
+            75% { transform: scale(1.05) translate(1%, 1%); }
+        }
+        .pensieve-loader, .modal-loader {
+            border: 4px solid #717679;
+            border-top: 4px solid #00a8b5;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .skill-item:hover {
+            color: #00a8b5;
+            transform: translateX(5px);
+            transition: all 0.2s ease-in-out;
+        }
+    </style>
+</head>
+<body class="antialiased relative">
+
+    <div id="particle-container"></div>
+
+    <header class="bg-slate-900/50 backdrop-blur-sm p-4 fixed w-full z-50 border-b border-gold/20">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a href="#atrium" class="font-magic text-gold text-2xl flex items-center gap-2">
+                <div class="deathly-hallows">
+                    <div class="triangle"></div>
+                    <div class="circle"></div>
+                    <div class="line"></div>
+                </div>
+                V.M.
+            </a>
+            <div class="hidden md:flex space-x-8 font-magic tracking-wider">
+                <a href="#prophecy-hall" class="hover:text-prophecy-blue transition-colors">Experience</a>
+                <a href="#spells-chamber" class="hover:text-prophecy-blue transition-colors">Skills</a>
+                <a href="#thought-chamber" class="hover:text-prophecy-blue transition-colors">Projects</a>
+                <a href="#pensieve" class="hover:text-prophecy-blue transition-colors">Pensieve</a>
+                <a href="#owl-post" class="hover:text-prophecy-blue transition-colors">Contact</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden text-2xl">☰</button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden mt-4 text-center font-magic tracking-wider bg-slate-900/80 rounded-lg py-2">
+            <a href="#prophecy-hall" class="block py-2 hover:text-prophecy-blue transition-colors">Experience</a>
+            <a href="#spells-chamber" class="block py-2 hover:text-prophecy-blue transition-colors">Skills</a>
+            <a href="#thought-chamber" class="block py-2 hover:text-prophecy-blue transition-colors">Projects</a>
+            <a href="#pensieve" class="block py-2 hover:text-prophecy-blue transition-colors">Pensieve</a>
+            <a href="#owl-post" class="block py-2 hover:text-prophecy-blue transition-colors">Contact</a>
+        </div>
+    </header>
+
+    <main>
+        <section id="atrium" class="min-h-screen flex items-center justify-center text-center p-4 relative overflow-hidden">
+            <video autoplay loop muted playsinline class="video-bg">
+                <source src="video.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="absolute inset-0 bg-black/70"></div>
+            <div class="relative z-10">
+                <h1 class="font-magic text-4xl md:text-7xl text-gold tracking-widest">Vibhor Malik</h1>
+                <p class="font-quill text-2xl md:text-4xl mt-4 text-prophecy-blue">Architect of Digital Arcana</p>
+                <p class="mt-8 max-w-2xl mx-auto text-lg">Senior Backend Engineer & Distributed Systems Specialist, mastering the unseen forces that power the digital world. I build robust, scalable, and resilient systems that operate with the precision of a well-cast spell.</p>
+                <a href="#prophecy-hall" class="mt-12 inline-block bg-prophecy-blue text-white font-bold font-magic tracking-wider py-3 px-8 rounded-lg shadow-lg shadow-cyan-500/30 hover:bg-opacity-90 transition-all transform hover:scale-105">
+                    Enter the Department of Mysteries
+                </a>
+            </div>
+        </section>
+
+        <section id="prophecy-hall" class="py-20 relative overflow-hidden">
+            <div class="section-bg" style="background-image: url('https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=2070&q=80');"></div>
+            <div class="section-overlay"></div>
+            <div class="container mx-auto px-4 relative z-10">
+                <h2 class="font-magic text-4xl text-gold text-center tracking-wider">The Hall of Prophecy</h2>
+                <p class="text-center mt-4 max-w-3xl mx-auto">Each orb holds a record of past endeavors—foundational work performed at the highest levels. These are not mere memories, but captured moments of impact and innovation. Click an orb to reveal its contents.</p>
+                <div id="experience-grid" class="mt-16 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-12 justify-items-center">
+                </div>
+            </div>
+        </section>
+
+        <section id="spells-chamber" class="py-20 relative overflow-hidden">
+             <div class="section-bg" style="background-image: url('https://images.unsplash.com/photo-1534723452862-4c874018d66d?auto=format&fit=crop&w=1964&q=80');"></div>
+            <div class="section-overlay"></div>
+            <div class="container mx-auto px-4 relative z-10">
+                <h2 class="font-magic text-4xl text-gold text-center tracking-wider">The Chamber of Spells & Incantations</h2>
+                <p class="text-center mt-4 max-w-3xl mx-auto">Within this chamber lie the fundamental forces and potent tools I have mastered. These are the core magics that bring complex digital structures to life. Click a spell to learn its secrets.</p>
+                <div id="skills-container" class="mt-16 grid md:grid-cols-2 lg:grid-cols-4 gap-10">
+                    <div id="core-magics" class="bg-slate-900/50 p-6 rounded-lg border border-gold/20 backdrop-blur-sm"></div>
+                    <div id="potent-platforms" class="bg-slate-900/50 p-6 rounded-lg border border-gold/20 backdrop-blur-sm"></div>
+                    <div id="defensive-arts" class="bg-slate-900/50 p-6 rounded-lg border border-gold/20 backdrop-blur-sm"></div>
+                    <div id="ancient-runes" class="bg-slate-900/50 p-6 rounded-lg border border-gold/20 backdrop-blur-sm"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="thought-chamber" class="py-20 relative overflow-hidden">
+            <div class="section-bg" style="background-image: url('https://images.unsplash.com/photo-1534714392334-98b1a79a2295?auto=format&fit=crop&w=1887&q=80');"></div>
+            <div class="section-overlay"></div>
+            <div class="container mx-auto px-4 relative z-10">
+                <h2 class="font-magic text-4xl text-gold text-center tracking-wider">The Thought Chamber</h2>
+                <p class="text-center mt-4 max-w-3xl mx-auto">Here, abstract thoughts are made manifest. This is a space for personal research and experimentation in Applied Charms, where concepts are forged into functioning artifacts.</p>
+                <div id="projects-grid" class="mt-16 grid md:grid-cols-2 gap-8">
+                </div>
+            </div>
+        </section>
+
+        <section id="pensieve" class="py-20 relative overflow-hidden">
+            <div class="section-bg" style="background-image: url('https://images.unsplash.com/photo-1518156677180-95a2893f3e9f?auto=format&fit=crop&w=1935&q=80');"></div>
+            <div class="section-overlay"></div>
+            <div class="container mx-auto px-4 relative z-10">
+                <h2 class="font-magic text-4xl text-gold text-center tracking-wider">The Pensieve of Possibilities</h2>
+                <p class="text-center mt-4 max-w-3xl mx-auto">Pose a technical challenge or a project idea. I will consult the Pensieve to reveal a high-level strategy, demonstrating how I might approach the problem using modern digital alchemy.</p>
+                <div class="mt-12 max-w-3xl mx-auto">
+                    <textarea id="pensieve-query" class="w-full h-24 p-4 rounded-lg bg-slate-900/70 border border-gold/30 focus:ring-2 focus:ring-prophecy-blue focus:outline-none transition-all" placeholder="e.g., How would you design a scalable system for real-time magical beast tracking?"></textarea>
+                    <button id="consult-pensieve-button" class="mt-4 w-full bg-prophecy-blue text-white font-bold font-magic tracking-wider py-3 px-8 rounded-lg shadow-lg shadow-cyan-500/30 hover:bg-opacity-90 transition-all transform hover:scale-105 flex items-center justify-center gap-3">
+                        ✨ Consult the Pensieve ✨
+                    </button>
+                    <div id="pensieve-response-container" class="mt-8 p-6 rounded-lg bg-slate-900/70 border border-gold/30 backdrop-blur-sm min-h-[100px] hidden">
+                        <div id="pensieve-loader" class="pensieve-loader mx-auto hidden"></div>
+                        <div id="pensieve-response" class="prose prose-invert max-w-none"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="owl-post" class="py-20 bg-black bg-opacity-20">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="font-magic text-4xl text-gold tracking-wider">Owl Post & Apparition</h2>
+                <p class="mt-4 max-w-2xl mx-auto">Should you wish to convene, send a message through the usual channels. Your owl will be received promptly.</p>
+                <div class="mt-12 flex justify-center items-center gap-8">
+                    <a href="mailto:vibh1103@gmail.com" class="text-prophecy-blue hover:text-gold transition-colors text-lg font-semibold">vibh1103@gmail.com</a>
+                    <span class="text-muted-silver">|</span>
+                    <a href="https://www.linkedin.com/in/vibhor-malik-b5353b137/" target="_blank" class="text-prophecy-blue hover:text-gold transition-colors text-lg font-semibold">Official Ministry Record (LinkedIn)</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="text-center py-8 border-t border-muted-silver border-opacity-20 bg-slate-900">
+        <p class="text-muted-silver">Crafted with Digital Alchemy by Vibhor Malik © 2024</p>
+        <p class="text-xs text-muted-silver mt-2">All thematic elements inspired by the world of Harry Potter.</p>
+    </footer>
+
+    <div id="modal-container" class="modal fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-70 backdrop-blur-sm opacity-0 pointer-events-none">
+        <div id="modal-content" class="modal-content bg-parchment text-gray-800 rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8 relative transform scale-95">
+            <button id="modal-close-button" class="absolute top-4 right-4 text-2xl text-gray-600 hover:text-gray-900">&times;</button>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const experienceData = [
+                {
+                    title: "Lead Unspeakable, Global Logistics Division",
+                    company: "Delivery Hero",
+                    period: "Jan 2023 – Present",
+                    achievements: [
+                        { title: "Architecting Self-Constructing Enchantments", description: "Authored foundational incantations (AWS CDK) that allow complex architectural structures (microservices) to build and repair themselves automatically upon command.", analogy: "Infrastructure as Code (IaC) is perfectly analogous to a powerful, repeatable spell that creates complex structures from nothing." },
+                        { title: "Engineering the Ministry's Howler Network", description: "Developed a network of reactive charms (event-driven systems) that delivered critical messages instantly across disparate systems, eliminating communication delays and ensuring operational resilience.", analogy: "Howlers are a canonical example of an event-driven, high-priority message in the wizarding world." },
+                        { title: "Brewing Potions of Efficiency", description: "Concocted and refined API potions with integrated scrying metrics to reveal and minimize the expenditure of magical energy (cloud costs) and server resources.", analogy: "Potion-making requires precise measurement and refinement to achieve a desired effect, mirroring the process of API optimization." },
+                        { title: "Transfiguring Ancient Golems into Agile Sprites", description: "Mastered the complex transfiguration of monolithic, archaic constructs (legacy systems) into nimble, powerful, and cloud-native entities using Docker and Kubernetes.", analogy: "Transfiguration is the magical art of changing a thing's fundamental form and nature, a perfect metaphor for system migration." }
+                    ]
+                },
+                {
+                    title: "Journeyman Artificer, Division of Divination",
+                    company: "ThinkFuture Technologies",
+                    period: "Nov 2021 – Dec 2022",
+                    achievements: [
+                        { title: "Forging Robust Backend Artifacts", description: "Engineered RESTful APIs and consulted AWS oracles to build highly scalable, cloud-based backend systems designed to anticipate and serve future needs.", analogy: "The company name 'ThinkFuture' maps directly and cleverly to the magical discipline of Divination." },
+                        { title: "Casting Wards of Invulnerability", description: "Methodically applied powerful defensive charms (Jest unit tests) to shield critical backend modules from bugs and curses, achieving over 80% ward coverage.", analogy: "The practice of unit testing is functionally identical to casting protective wards to prevent future harm or failure." },
+                        { title: "Streamlining Deployment Runes", description: "Built reusable components and Infrastructure as Code to streamline deployment pipelines, reducing errors and accelerating the delivery of new enchantments.", analogy: "Runes represent repeatable, reliable instructions, much like reusable code modules." }
+                    ]
+                },
+                {
+                    title: "Spellcrafter, Secure Access Division",
+                    company: "OnceHub",
+                    period: "May 2021 – Nov 2021",
+                    achievements: [
+                        { title: "Crafting High-Availability Micro-Charms", description: "Designed cloud-native microservices managed via Kubernetes, ensuring high availability and robust fault tolerance for critical systems.", analogy: "Micro-charms suggest small, potent spells that work together, mirroring microservices architecture." },
+                        { title: "Implementing the Unbreakable Vow of Authentication", description: "Implemented authentication workflows using SAML SSO, forging a magically binding agreement between systems to improve enterprise-level security.", analogy: "SAML SSO acts like an Unbreakable Vow, ensuring only the intended parties can gain access." },
+                        { title: "Vigilant Bug-Banishing Curses", description: "Proactively resolved production tickets with precision, balancing speed and accuracy to maintain Service Level Agreement (SLA) commitments.", analogy: "Banishing curses are swift, targeted spells to remove threats, just like efficient bug resolution." }
+                    ]
+                },
+                {
+                    title: "Apprentice Alchemist",
+                    company: "Polestar Solutions & Services",
+                    period: "Jan 2019 – May 2021",
+                    achievements: [
+                        { title: "Developing Modern Spell Modules", description: "Developed backend modules with TypeScript, ensuring compatibility with modern development frameworks and spellcasting paradigms.", analogy: "TypeScript adds structure and safety to JavaScript, much like a formal spellcasting system." },
+                        { title: "Weaving Data Threads", description: "Designed API integrations for business-critical systems, ensuring real-time data synchronization and fault tolerance between magical artifacts.", analogy: "APIs weave threads of data between different applications, keeping them in sync." },
+                        { title: "Automating Alchemical Processes", description: "Applied IaC techniques to automate infrastructure deployment and monitoring, improving the efficiency and reliability of our digital alchemy lab.", analogy: "Automating infrastructure is like enchanting the lab equipment to work on its own." }
+                    ]
+                }
+            ];
+
+            const skillsData = {
+                "core-magics": {
+                    title: "Core Magics",
+                    skills: ["TypeScript", "Golang", "JavaScript", "Python", "SQL"]
+                },
+                "potent-platforms": {
+                    title: "Potent Platforms",
+                    skills: ["AWS (EC2, S3, Lambda)", "Docker", "Kubernetes", "Node.js", "CI/CD"]
+                },
+                "defensive-arts": {
+                    title: "Defensive Arts",
+                    skills: ["Jest", "TDD", "Automated Testing", "Technical Troubleshooting"]
+                },
+                "ancient-runes": {
+                    title: "Ancient Runes",
+                    skills: ["MySQL", "PostgreSQL", "MongoDB", "Redis", "Elasticsearch"]
+                }
+            };
+
+            const projectsData = [
+                {
+                    title: "Sustainable Energy Monitoring Microservice",
+                    description: "A personal research project into Applied Charms. This microservice leverages AWS Lambda and CDK for rapid, serverless deployment. It monitors energy consumption, providing insights for more sustainable resource allocation—a practical application of efficiency potions on a grand scale."
+                },
+                {
+                    title: "Public Grimoire of Code",
+                    description: "Published technical scrolls on AWS CDK and Jest on various platforms. These writings emphasize best practices for creating scalable and rigorously tested cloud architectures, sharing knowledge with fellow alchemists in the field."
+                }
+            ];
+
+            const experienceGrid = document.getElementById('experience-grid');
+            experienceData.forEach(exp => {
+                const orb = document.createElement('div');
+                orb.className = 'prophecy-orb';
+                orb.innerHTML = `<div class="orb-text"><h3 class="font-magic text-sm font-bold">${exp.company}</h3><p class="text-xs text-muted-silver mt-1">${exp.period}</p></div>`;
+                orb.addEventListener('click', () => openExperienceModal(exp));
+                experienceGrid.appendChild(orb);
+            });
+
+            Object.keys(skillsData).forEach(categoryKey => {
+                const category = skillsData[categoryKey];
+                const container = document.getElementById(categoryKey);
+                let html = `<h3 class="font-magic text-2xl text-prophecy-blue tracking-wider mb-6">${category.title}</h3><ul class="space-y-3">`;
+                category.skills.forEach(skill => {
+                    html += `<li class="skill-item flex items-center gap-3" data-skill="${skill}"><span class="text-gold">✦</span> ${skill}</li>`;
+                });
+                html += `</ul>`;
+                container.innerHTML = html;
+            });
+            
+            document.querySelectorAll('.skill-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    const skillName = e.currentTarget.dataset.skill;
+                    openSkillModal(skillName);
+                });
+            });
+
+            const projectsGrid = document.getElementById('projects-grid');
+            projectsData.forEach(proj => {
+                const card = document.createElement('div');
+                card.className = 'bg-slate-900/50 p-6 rounded-lg border border-gold/20 backdrop-blur-sm';
+                card.innerHTML = `
+                    <h3 class="font-magic text-xl text-prophecy-blue tracking-wider">${proj.title}</h3>
+                    <p class="mt-4 text-sm">${proj.description}</p>
+                `;
+                projectsGrid.appendChild(card);
+            });
+
+            const modalContainer = document.getElementById('modal-container');
+            const modalContent = document.getElementById('modal-content');
+            const modalBody = document.getElementById('modal-body');
+            const modalCloseButton = document.getElementById('modal-close-button');
+
+            function openExperienceModal(exp) {
+                let contentHtml = `<h2 class="font-magic text-3xl text-gold tracking-wider">${exp.title.replace(/|<\/selection-tag>/g, '')}</h2>`;
+                contentHtml += `<p class="font-semibold text-gray-600 mt-1">${exp.company} | ${exp.period}</p>`;
+                contentHtml += `<div class="mt-6 space-y-6">`;
+                exp.achievements.forEach(ach => {
+                    contentHtml += `
+                        <div>
+                            <h4 class="font-magic text-xl text-cyan-700">${ach.title}</h4>
+                            <p class="mt-1 text-gray-700">${ach.description}</p>
+                            <p class="mt-2 text-xs font-quill text-gray-500">Analogy: ${ach.analogy}</p>
+                        </div>
+                    `;
+                });
+                contentHtml += `</div>`;
+                modalBody.innerHTML = contentHtml;
+                modalContainer.classList.remove('opacity-0', 'pointer-events-none');
+                modalContent.classList.remove('scale-95');
+            }
+            
+            async function openSkillModal(skillName) {
+                modalBody.innerHTML = `<div class="modal-loader"></div>`;
+                modalContainer.classList.remove('opacity-0', 'pointer-events-none');
+                modalContent.classList.remove('scale-95');
+
+                const prompt = `
+                    You are Vibhor Malik, a Senior Backend Engineer who explains complex technical concepts using the theme of magic and alchemy from Harry Potter. 
+                    A user has asked to know more about the spell: "${skillName}".
+                    Explain what this "spell" is used for in the world of digital alchemy and why it is a potent tool in an engineer's grimoire. 
+                    Keep the explanation concise (2-3 paragraphs) and thematic.
+                `;
+                
+                try {
+                    const text = await callGemini(prompt);
+                    modalBody.innerHTML = `
+                        <h2 class="font-magic text-3xl text-gold tracking-wider">The Spell of ${skillName}</h2>
+                        <div class="mt-4 text-gray-700">${text.replace(/\n/g, '<br><br>')}</div>
+                    `;
+                } catch (error) {
+                    modalBody.innerHTML = `<p>A dark charm has interfered with the vision. Please try again later.</p>`;
+                }
+            }
+
+            function closeModal() {
+                modalContainer.classList.add('opacity-0');
+                modalContent.classList.add('scale-95');
+                setTimeout(() => {
+                    modalContainer.classList.add('pointer-events-none');
+                }, 250);
+            }
+            
+            modalCloseButton.addEventListener('click', closeModal);
+            modalContainer.addEventListener('click', (e) => {
+                if (e.target === modalContainer) {
+                    closeModal();
+                }
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === "Escape") closeModal();
+            });
+
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            document.querySelectorAll('#mobile-menu a, nav a').forEach(link => {
+                link.addEventListener('click', () => {
+                   if (!mobileMenu.classList.contains('hidden')) {
+                       mobileMenu.classList.add('hidden');
+                   }
+                });
+            });
+
+            const particleContainer = document.getElementById('particle-container');
+            document.addEventListener('mousemove', (e) => {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                const size = Math.random() * 4 + 1;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${e.pageX}px`;
+                particle.style.top = `${e.pageY}px`;
+                particleContainer.appendChild(particle);
+                setTimeout(() => {
+                    particle.remove();
+                }, 1000);
+            });
+
+            const consultButton = document.getElementById('consult-pensieve-button');
+            const pensieveQuery = document.getElementById('pensieve-query');
+            const responseContainer = document.getElementById('pensieve-response-container');
+            const pensieveResponse = document.getElementById('pensieve-response');
+            const pensieveLoader = document.getElementById('pensieve-loader');
+
+            async function callGemini(promptText) {
+                let chatHistory = [];
+                chatHistory.push({ role: "user", parts: [{ text: promptText }] });
+                const payload = { contents: chatHistory };
+                const apiKey = ""; 
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+                
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status}`);
+                }
+
+                const result = await response.json();
+                
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    return result.candidates[0].content.parts[0].text;
+                } else {
+                    throw new Error("The Pensieve returned an empty vision.");
+                }
+            }
+
+            consultButton.addEventListener('click', async () => {
+                const query = pensieveQuery.value;
+                if (!query) {
+                    pensieveResponse.innerHTML = '<p>Please pose a challenge to the Pensieve.</p>';
+                    responseContainer.classList.remove('hidden');
+                    return;
+                }
+
+                responseContainer.classList.remove('hidden');
+                pensieveResponse.classList.add('hidden');
+                pensieveLoader.classList.remove('hidden');
+                consultButton.disabled = true;
+
+                const prompt = `
+                    You are Vibhor Malik, a Senior Backend Engineer who explains complex technical concepts using the theme of magic and alchemy from Harry Potter. 
+                    A user has asked the following question: "${query}".
+                    Provide a high-level, strategic technical plan to solve their problem. Frame the entire response in the Harry Potter theme. 
+                    For example, refer to technologies like AWS as 'potent platforms', microservices as 'micro-charms', APIs as 'potions' or 'incantations', databases as 'ancient runes', and so on. 
+                    The response should be creative, technically sound, and maintain the persona. Structure it with a title and a few paragraphs.
+                `;
+
+                try {
+                    const text = await callGemini(prompt);
+                    pensieveResponse.innerHTML = text.replace(/\n/g, '<br>');
+                } catch (error) {
+                    console.error("Error consulting the Pensieve:", error);
+                    pensieveResponse.innerHTML = `<p>A dark charm has interfered with the Pensieve's vision. Please try again later.</p><p class="text-xs text-muted-silver mt-2">${error.message}</p>`;
+                } finally {
+                    pensieveLoader.classList.add('hidden');
+                    pensieveResponse.classList.remove('hidden');
+                    consultButton.disabled = false;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
