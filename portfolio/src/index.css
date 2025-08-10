@@ -24,7 +24,7 @@
 
   /* Fonts */
   --heading-font: 'Yusei Magic', sans-serif;
-  --body-font: 'Merriweather', serif;
+  --body-font: 'Cedarville Cursive', cursive;
 }
 
 body {
@@ -32,6 +32,7 @@ body {
   background-color: var(--background-color);
   color: var(--text-color);
   line-height: 1.6;
+  cursor: url('https://toppng.com/uploads/preview/harry-potter-wand-png-harry-potter-wand-black-and-white-11563241876stl2m5h2hf.png'), auto;
 }
 
 h1, h2, h3, h4, h5, h6 {
