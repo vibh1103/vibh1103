@@ -1,0 +1,10 @@
+.experience {
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.job {
+  border-left: 2px solid var(--secondary-color);
+  padding-left: 1.5rem;
+  margin-bottom: 1.5rem;
+}

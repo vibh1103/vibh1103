@@ -1,0 +1,17 @@
+.marauders-map {
+  padding: 1rem 2rem;
+  background-color: #000;
+  border-bottom: 1px solid var(--secondary-color);
+}
+
+.marauders-map ul {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.marauders-map a {
+  font-family: var(--heading-font);
+  font-size: 1.2rem;
+}
